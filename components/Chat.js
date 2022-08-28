@@ -13,9 +13,9 @@ export default class Chat extends Component {
             messages: [],
             uid: 0,
       user: {
-        _id: '',
-        name: '',
-        }
+        _id: "",
+        name: "",
+        },
     }
  // Set up firebase
  const firebaseConfig = {
@@ -153,4 +153,3 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
     },
 })
-Footer
