@@ -40,7 +40,7 @@ onCollectionUpdate = (querySnapshot) => {
     // Go through each document
     querySnapshot.forEach((doc) => {
       // Get the QueryDocumentsSnapshot's data
-      let data = doc.data();
+      var data = doc.data();
       messages.push({
         _id: data._id,
         text: data.text,
@@ -76,26 +76,27 @@ onCollectionUpdate = (querySnapshot) => {
           name: name,
         },
     });
+
     this.unsubscribe = this.referenceChatMessages
         .orderBy('createdAt', 'desc')
         .onSnapshot(this.onCollectionUpdate);
     });
   }
   componentWillUnmount() {
-    this.unsubscribe();
+    if (this.state.isConnected) {
+        this.unsubscribe();}
   }
 
-    onSend(messages = []) {
-    this.setState(
-      (previousState) => ({
-        messages: GiftedChat.append(previousState.messages, messages),
-      }),
-      () => {
-        // Call addMessage with last message in message state
-        this.addMessages(this.state.messages[0]);
-      }
-    );
-  }
+  onSend(messages = []) {
+    const newMessage = messages[0]
+    this.referenceChatMessages.add({
+        _id: newMessage._id,
+        text: newMessage.text,
+        createdAt: newMessage.createdAt,
+        user: newMessage.user,
+        system: false,
+    });
+}
 // Add message to Firestore
 addMessages = (message) => {
     this.referenceChatMessages.add({
@@ -107,30 +108,59 @@ addMessages = (message) => {
     });
   };
 
-    renderBubble(props) {
-        return (
+        renderBubble(props) {
+            let color;
+            if (this.props.route.params.color === '#090C08') color = '#8A95A5'
+            else if (this.props.route.params.color === '#474056') color = '#B9C6AE'
+            else if (this.props.route.params.color === '#8A95A5') color = '#B9C6AE'
+            else if (this.props.route.params.color === '#B9C6AE') color = '#474056'
+        
+            return (
             <Bubble
                 {...props}
                 wrapperStyle={{
+                    left: {
+                        backgroundColor: '#fafafa',
+                      },
                     right: {
-                        backgroundColor: 'blue'
+                        backgroundColor: '#2d7ecf',
                     }
                 }}
             />
         )
     }
- 
+    renderDay(props) {
+        return <Day {...props} textStyle={{ color: 'white' }} />
+    }
+    renderTime(props) {
+        return (
+            <Time
+                {...props}
+                timeTextStyle={{
+                    left: {
+                        color: 'black',
+                    },
+                    right: {
+                        color: 'white',
+                    },
+                }}
+            />
+        );
+    };
+    renderSystemMessage(props) {
+        return <SystemMessage {...props} textStyle={{ color: 'white', fontFamily: 'Poppins-Regular' }} />
+    }
         render() {
-            let { color, name } = this.props.route.params;
+            let color = this.props.route.params.color;
             // Set default background color if no color was selected
             if (color === '') {
               color = '#8A95A5';
-    return (
-        <View style={[styles.container, { backgroundColor: color }]}>
+            }
+
+            return (
+                <View style={[{ backgroundColor: color }, { flex: 1 }]}>
             <GiftedChat
                 renderBubble={this.renderBubble.bind(this)}
-                renderDay={this.renderDay.bind(this)}
-                renderSystemMessage={this.renderSystemMessage.bind(this)}
                 messages={this.state.messages}
                 onSend={messages => this.onSend(messages)}
                 user={{_id: this.state.user._id, name: this.state.user.name
@@ -140,7 +170,7 @@ addMessages = (message) => {
         </View>
         );
     }
-}}
+}
 
 const styles = StyleSheet.create({
     container: {
@@ -152,4 +182,4 @@ const styles = StyleSheet.create({
     text: {
         color: '#FFFFFF',
     },
-})
+  })
