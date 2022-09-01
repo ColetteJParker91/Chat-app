@@ -5,27 +5,15 @@ import { GiftedChat, Bubble, SystemMessage, Day, InputToolbar} from 'react-nativ
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NetInfo from '@react-native-community/netinfo';
 
-import * as Location from 'expo-location';
 import MapView from 'react-native-maps';
 
-import Actions from './Actions.js';
+import CustomActions from './CustomActions.js';
 
 const firebase = require('firebase');
 require('firebase/firestore');
 
 export default class Chat extends Component {
-   // CUSTOM METHODS
-   onSend(messages = []) {
-
-const newMessage = messages[0] //this.state.messages[0]
-this.referenceChatMessages.add({
-    _id: newMessage._id,
-    text: newMessage.text,
-    createdAt: newMessage.createdAt,
-    user: newMessage.user,
-    system: false,
-})
-}
+   
     renderBubble(props) {
         let bubbleColor;
         if (this.props.route.params.color === '#090C08') bubbleColor = '#8A95A5'
@@ -40,7 +28,10 @@ this.referenceChatMessages.add({
                       backgroundColor: bubbleColor
                   }
               }}
-          
+              textStyle={{
+                right: {
+                    color: 'white'
+                } }}
           />
       )
   }
@@ -101,6 +92,8 @@ renderCustomView(props) {
         text: newMessage.text,
         createdAt: newMessage.createdAt,
         user: newMessage.user,
+        image: newMessage.image || null,
+        location: newMessage.location || null,
         system: false,
     });
   }
@@ -115,6 +108,8 @@ renderCustomView(props) {
             text: data.text,
             createdAt: data.createdAt.toDate(),
             user: data.user,
+            image: data.image || null,
+            location: data.location || null,
             system: data.system,
              });
     });
@@ -214,10 +209,12 @@ async getMessages() {
               renderDay={this.renderDay.bind(this)}
               renderSystemMessage={this.renderSystemMessage.bind(this)}
               renderInputToolbar={this.renderInputToolbar.bind(this)}
+              renderActions={this.renderCustomActions}
+              renderCustomView={this.renderCustomView}
               messages={this.state.messages}
               onSend={messages => this.onSend(messages)}
               user={{
-                  _id: 2,
+                  _id: uid,
               }}
           />
           {/* Fixes keyboard overlap on some Android devices */}
