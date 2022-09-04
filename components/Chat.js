@@ -96,6 +96,7 @@ renderCustomView(props) {
         location: newMessage.location || null,
         system: false,
     });
+this.saveMessages ();
   }
   onCollectionUpdate = (querySnapshot) => {
     const messages = [];
@@ -149,20 +150,20 @@ async saveMessages() {
   try {
     await AsyncStorage.setItem('messages', JSON.stringify(messages));
   } catch (error) {
-      console.log(error.message);
+      console.error(error.message);
   }
 }
 
 // Fetches messages from asyncStorage (local)
 async getMessages() {
-  let messages = '';
+  let messages = [];
   try {
       messages = await AsyncStorage.getItem('messages') || [];
       this.setState({
           messages: JSON.parse(messages)
       });
   } catch (error) {
-      console.log(error.message);
+      console.error(error.message);
   }
 }
 
