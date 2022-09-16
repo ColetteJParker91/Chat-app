@@ -1,8 +1,12 @@
-import React, { Component } from 'react';
-import { StyleSheet, View, Text, ImageBackground, TextInput } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-export default class Start extends Component {
+import React, { Component } from 'react';
+import { StyleSheet, View, Text, TextInput, ImageBackground,
+ } from 'react-native';
+
+import { Directions } from 'react-native-gesture-handler';
+
+export default class Start extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -14,7 +18,7 @@ export default class Start extends Component {
     render() {
         return (
             <View style={styles.container}>
-            <ImageBackground source={require('../assets/Background-Image.png')} style={styles.image}>
+            <ImageBackground source={require('../assets/BackgroundImage.png')} style={styles.image}>
                 <Text style={styles.title}>Chat App</Text>
                 <View style={styles.box1}>
                     <TextInput style={[styles.input, styles.smallText]}
@@ -61,7 +65,7 @@ export default class Start extends Component {
                     </View>
                 </ImageBackground>
             </View>
-        );
+        )
     }
 }
 
